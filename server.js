@@ -15,10 +15,37 @@ app.use(cors({
 }));
 app.options('*', cors());
 
+const db = {
+    christophe: {
+        user: 'christophe',
+        currency: '€',
+        description: "Christophe's account",
+        balance: 10000,
+        transactions: []
+    },
+    maryline: {
+        user: 'maryline',
+        currency: '€',
+        description: "Maryline's account",
+        balance: 5000,
+        transactions: []
+    }
+};
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
     res.send(`${package.name} - v${package.version}`);
+});
+
+router.get('/accounts/:user', (req, res) => {
+    const user = req.params.user;
+    const account = db[user];
+
+    if (!account) {
+        return res.status(404).json({error: 'User does not exist'});
+    }
+    return res.json(account);
 });
 
 app.use(apiRoot, router);
